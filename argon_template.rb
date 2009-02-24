@@ -4,12 +4,23 @@ run "rm public/index.html"
 
 run 'echo We need some documentation > README'
 
+# rails:rm_tmp_dirs
+["./tmp/pids", "./tmp/sessions", "./tmp/sockets", "./tmp/cache"].each do |f|
+  run("rmdir ./#{f}")
+end
+
 generate :rspec
 
 git :init
 
 file ".gitignore", <<-END
-log/*.log
+log/\\*.log
+log/\\*.pid
+db/\\*.db
+db/\\*.sqlite3
+db/schema.rb
+tmp/\\*\\*/\\*
+.DS_Store
 ToDo
 tmp/**/*
 sphinx/*.sp*
