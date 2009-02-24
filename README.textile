@@ -1,0 +1,5 @@
+To use the Planet Argon Rails Template generator thingie...
+
+@rails project_name -m http://github.com/planetargon/rails-templates/raw/master/argon_template.rb@
+
+Voila!
