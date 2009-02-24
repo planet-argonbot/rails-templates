@@ -5,27 +5,32 @@ project_name = project_name.downcase.gsub(/[^[:alnum:]]/, '')
 
 run "rm public/index.html README"
 
-file "README.textile", <<-END
+file 'README.textile', <<-END
 h2. Database Configuration
 
 * Copy the file @config/database.yml.example@ to @config/database.yml@
-* Edit @config/database.yml@
+* Edit @config/database.yml@-rails
 * Run @rake db:create:all@
 * Run @rake db:migrate@
 END
 
-# rails:rm_tmp_dirs
 ["./tmp/pids", "./tmp/sessions", "./tmp/sockets", "./tmp/cache"].each do |f|
   run("rmdir ./#{f}")
 end
 
+gem 'RedCloth', :version => '3.0.3'
+# commented out until Rails 2.3 fixes false libs
+# gem 'rspec', :lib => false
+# gem 'rspec-rails', :lib => false
+gem 'rcov'
+
 generate :rspec
 
-run "rm config/database.yml"
+run 'rm config/database.yml'
 
 git :init
 
-file ".gitignore", <<-END
+file '.gitignore', <<-END
 log/\\*.log
 log/\\*.pid
 db/\\*.db
@@ -51,7 +56,7 @@ config/database.yml
 db/schema.rb
 END
 
-file "config/database.yml.example", <<-END
+file 'config/database.yml.example', <<-END
 login: &login
   adapter: postgresql
   host: localhost
@@ -70,10 +75,12 @@ production:
   <<: *login
 END
 
+file 'public/stylesheets/ie.css', <<-END
+/* CSS fixes for IE */
+END
+
 file 'app/helpers/application_helper.rb',
 %q{module ApplicationHelper
-  HTML_TITLE_DELIMITER = "&raquo;"
-  
   def set_title(str="")
     unless str.blank?
       content_for :title do
@@ -89,8 +96,13 @@ file 'app/helpers/application_helper.rb',
 end
 }
 
+run ''
+
 file 'app/controllers/application_controller.rb',
 %q{class ApplicationController < ActionController::Base
+  # Makes the URL look like: page name >> PLANET ARGON"
+  HTML_TITLE_DELIMITER = "&raquo;"
+    
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
@@ -113,6 +125,50 @@ file 'app/controllers/application_controller.rb',
     #   end
     # end    
 end
+}
+
+file 'app/controllers/static_controller.rb',
+%q{class StaticController < ApplicationController
+end}
+
+run("mkdir app/views/static")
+
+file 'app/views/static/index.html', 
+%q{
+<p>I am in <code>app/views/static/index.html.erb</p>
+}
+
+route "map.resource :static, :controller => 'static'"
+route "map.root :controller => 'static'"
+
+file 'app/views/layouts/application.html.erb',
+%q{<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title><%= (title = yield :title) ? title : "TODO: Project tag line... #{HTML_TITLE_DELIMITER} " %> TODO: Project Name</title>
+  <%= stylesheet_link_tag 'master' %>
+  <!--[if lte IE 6]> <link rel="stylesheet" href="/stylesheets/ie.css" type="text/css"><![endif]-->
+  <%= javascript_include_tag :defaults, :cache => 'all' %>
+</head>
+<body> 
+  <!--// Flash Message Conductor //-->
+  <% if flash_message_set? -%>
+    <%= render_flash_messages %>
+  <% end -%>
+
+  <div id="content" class="clear">
+  <%= yield %>
+  </div><!-- /end content --> 
+
+  <!--// Copyright Information //-->
+  <p id="copyright_info">&copy; Copyright <%= current_year_range(2009) -%></p>
+ 
+<%= yield :javascript %> 
+</body>
+</html>
 }
 
 git :add => "."
