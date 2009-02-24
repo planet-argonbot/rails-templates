@@ -1,8 +1,18 @@
 # Argon Template for Ruby on Rails applications
 
-run "rm public/index.html"
+project_name = ask("What are you naming this project?")
+project_name = project_name.downcase.gsub(/[^[:alnum:]]/, '') 
 
-run 'echo We need some documentation > README'
+run "rm public/index.html README"
+
+file "README.textile", <<-END
+h2. Database Configuration
+
+* Copy the file @config/database.yml.example@ to @config/database.yml@
+* Edit @config/database.yml@
+* Run @rake db:create:all@
+* Run @rake db:migrate@
+END
 
 # rails:rm_tmp_dirs
 ["./tmp/pids", "./tmp/sessions", "./tmp/sockets", "./tmp/cache"].each do |f|
@@ -10,6 +20,8 @@ run 'echo We need some documentation > README'
 end
 
 generate :rspec
+
+run "rm config/database.yml"
 
 git :init
 
@@ -46,15 +58,15 @@ login: &login
   port: 5432
 
 development:
-  database: app_name_development
+  database: #{project_name}_development
   <<: *login
 
 test:
-  database: app_name_test
+  database: #{project_name}_test
   <<: *login
 
 production:
-  database: app_name_production
+  database: #{project_name}_production
   <<: *login
 END
 
@@ -112,3 +124,7 @@ plugin "year_after_year", :git => 'git://github.com/robbyrussell/year_after_year
 
 git :add => '.'
 git :commit => "-m 'adding flash message conductor and year after year plugins'"
+
+puts "**********************************************"
+puts "* All Done! "
+puts "**********************************************"
