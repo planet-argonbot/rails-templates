@@ -18,6 +18,8 @@ END
   run("rmdir ./#{f}")
 end
 
+run("rm log/*log")
+
 gem 'RedCloth', :version => '3.0.3'
 # commented out until Rails 2.3 fixes false libs
 # gem 'rspec', :lib => false
@@ -31,11 +33,10 @@ run 'rm config/database.yml'
 git :init
 
 file '.gitignore', <<-END
-log/\\*.log
-log/\\*.pid
-db/\\*.db
-db/\\*.sqlite3
-db/schema.rb
+log/*.log
+log/*.pid
+db/*.db
+db/*.sqlite3
 tmp/\\*\\*/\\*
 .DS_Store
 ToDo
@@ -54,6 +55,10 @@ config/database.yml
 
 # database schema
 db/schema.rb
+END
+
+file 'log/.gitignore', <<-END
+# this is just here so that the log/ directory isn't ignored by git
 END
 
 file 'config/database.yml.example', <<-END
