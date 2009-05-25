@@ -1,7 +1,7 @@
 # Argon Template for Ruby on Rails applications
 
 project_name = ask("What are you naming this project?")
-project_name = project_name.downcase.gsub(/[^[:alnum:]]/, '') 
+project_name = project_name.downcase.gsub(/[^[:alnum:]]/, '')
 
 run "rm public/index.html README"
 
@@ -58,7 +58,7 @@ END
 
 file 'config/database.yml.example', <<-END
 login: &login
-  adapter: postgresql
+  adapter: postgres
   host: localhost
   port: 5432
 
@@ -88,7 +88,7 @@ file 'app/helpers/application_helper.rb',
       end
     end
   end
-  
+
   # Displays alert for links that are unimplemented
   def link_to_unimplemented( link_text, *args )
     link_to_function( link_text, 'unimplemented()', *args)
@@ -102,18 +102,18 @@ file 'app/controllers/application_controller.rb',
 %q{class ApplicationController < ActionController::Base
   # Makes the URL look like: page name >> PLANET ARGON"
   HTML_TITLE_DELIMITER = "&raquo;"
-    
+
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
   protected
     # Gracefully handle bad requests by serving a 404 page
-    def render_404 
-      respond_to do |format| 
-        format.html { render :file => "#{RAILS_ROOT}/public/404.html", :status => '404 Not Found' } 
-        format.xml  { render :nothing => true, :status => '404 Not Found' } 
-      end 
-      true 
+    def render_404
+      respond_to do |format|
+        format.html { render :file => "#{RAILS_ROOT}/public/404.html", :status => '404 Not Found' }
+        format.xml  { render :nothing => true, :status => '404 Not Found' }
+      end
+      true
     end
 
     # Enable during staging/demoing
@@ -123,7 +123,7 @@ file 'app/controllers/application_controller.rb',
     #       username == "juan" && password == "diego"
     #     end
     #   end
-    # end    
+    # end
 end
 }
 
@@ -133,7 +133,7 @@ end}
 
 run("mkdir app/views/static")
 
-file 'app/views/static/index.html', 
+file 'app/views/static/index.html',
 %q{
 <p>I am in <code>app/views/static/index.html.erb</p>
 }
@@ -153,7 +153,7 @@ file 'app/views/layouts/application.html.erb',
   <!--[if lte IE 6]> <link rel="stylesheet" href="/stylesheets/ie.css" type="text/css"><![endif]-->
   <%= javascript_include_tag :defaults, :cache => 'all' %>
 </head>
-<body> 
+<body>
   <!--// Flash Message Conductor //-->
   <% if flash_message_set? -%>
     <%= render_flash_messages %>
@@ -161,12 +161,12 @@ file 'app/views/layouts/application.html.erb',
 
   <div id="content" class="clear">
   <%= yield %>
-  </div><!-- /end content --> 
+  </div><!-- /end content -->
 
   <!--// Copyright Information //-->
   <p id="copyright_info">&copy; Copyright <%= current_year_range(2009) -%></p>
- 
-<%= yield :javascript %> 
+
+<%= yield :javascript %>
 </body>
 </html>
 }
