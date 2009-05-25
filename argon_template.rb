@@ -58,7 +58,7 @@ END
 
 file 'config/database.yml.example', <<-END
 login: &login
-  adapter: postgres
+  adapter: postgresql
   host: localhost
   port: 5432
 
@@ -180,6 +180,8 @@ plugin "year_after_year", :git => 'git://github.com/robbyrussell/year_after_year
 
 git :add => '.'
 git :commit => "-m 'adding flash message conductor and year after year plugins'"
+
+run("cp config/database.yml.example config/database.yml")
 
 puts "**********************************************"
 puts "* All Done! "
